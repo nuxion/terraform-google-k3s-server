@@ -20,7 +20,6 @@ resource "google_compute_instance" "k3s_main" {
 
   // Create a new boot disk from an image
   boot_disk {
-    # source_image      = "debian-cloud/debian-11"
     auto_delete       = true
     initialize_params {
       size = "${var.server_boot_size}"
@@ -33,8 +32,9 @@ resource "google_compute_instance" "k3s_main" {
 
   network_interface {
     network = "${var.k3s_network}"
-    access_config { # add temporal public ip
-      # Ephemeral
+    # for temporal public ip keeps access_config empty
+    access_config { 
+      # for fixed public ip address uncomment this
       # nat_ip = google_compute_address.core_external_ip.address
     }
   }
@@ -48,22 +48,22 @@ resource "google_compute_instance" "k3s_main" {
     dnsname = "${var.server_name}.${var.dns_name}"
   }
 
-  metadata_startup_script =  "${file("${var.base_path}/scripts/google/k3s_install.sh")}"
+  metadata_startup_script =  "${file("${var.script_install}")}"
 
 
   service_account {
     # Google recommends custom service accounts that have cloud-platform scope and permissions granted via IAM Roles.
-    email  = "${var.k3s_service_account}@${var.project}.iam.gserviceaccount.com"
+    email  = "${var.k3s_service_account}@${var.project_id}.iam.gserviceaccount.com"
     scopes = var.k3s_scopes
   }
 }
 
-resource "google_dns_record_set" "kube_api" {
-  name = "${var.server_name}.${var.dns_name}"
-  type = "A"
-  ttl  = 300
-
-  managed_zone = "${var.dns_zone_name}"
-
-  rrdatas = [google_compute_instance.k3s_main.network_interface[0].network_ip]
-}
+# resource "google_dns_record_set" "kube_api" {
+#   name = "${var.server_name}.${var.dns_name}"
+#   type = "A"
+#   ttl  = 300
+# 
+#   managed_zone = "${var.dns_zone_name}"
+# 
+#   rrdatas = [google_compute_instance.k3s_main.network_interface[0].network_ip]
+# }
