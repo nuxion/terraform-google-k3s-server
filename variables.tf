@@ -3,26 +3,16 @@ variable "project_id" {
   type = string
 }
 
+variable "bucket" {
+  description = "Bucket used to store k3s status data"
+  type = string
+}
+
 variable "script_install" {
   description = "startup script for k3s installation"
   type = string
   default = "files/k3s_install.sh"
 }
-
-# variable "base_path" {
-#   description = "base path of the project"
-#   type = string
-# }
-
-# variable "dns_name" {
-#     description = "DNS private zone"
-#     type = string
-# }
-# 
-# variable "dns_zone_name" {
-#     description = "DNS private zone name"
-#     type = string
-# }
 
 variable "k3s_service_account" {
   type = string
@@ -33,7 +23,7 @@ variable "k3s_service_account" {
 variable "k3s_scopes" {
   type = list
   description = "Scopes to be configurated when creation the instance"
-  default = ["cloudplatform"]
+  default = ["cloud-platform"]
 }
 
 variable "network_tags" {
@@ -49,14 +39,10 @@ variable "server_name" {
 
 }
 
-variable "k3s_zone" {
+variable "server_zone" {
   description = "zone for this server"
   type = string
-}
-
-variable "k3s_location" {
-  description = "loc for this server"
-  type = string
+  default = "us-central1-a"
 }
 
 variable "label_env" {
@@ -74,7 +60,7 @@ variable "cluster_name" {
 variable "server_machine_type" {
   description = "GCP type machine"
   type = string
-  default = "e2-medium"
+  default = "e2-small"
 }
 
 variable "server_boot_image" {
@@ -95,7 +81,7 @@ variable "server_boot_type" {
   default = "pd-standard"
 }
 
-variable "k3s_network" {
+variable "network_name" {
   description = "Network to attach"
   type = string
   default = "default"
@@ -107,7 +93,7 @@ variable "k3s_version" {
   default = "v1.24.4+k3s1"
 }
 
-variable "k3s_csidisk" {
+variable "k3s_csidisk_version" {
   description = "CSI driver version to install for google disk provisioning"
   type = string
   default = "stable-1-24"

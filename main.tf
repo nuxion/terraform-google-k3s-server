@@ -10,7 +10,7 @@ resource "google_compute_instance" "k3s_main" {
   }
 
   machine_type         = "${var.server_machine_type}"
-  zone = "${var.k3s_zone}"
+  zone = "${var.server_zone}"
   can_ip_forward       = true 
 
   scheduling {
@@ -31,7 +31,7 @@ resource "google_compute_instance" "k3s_main" {
   }
 
   network_interface {
-    network = "${var.k3s_network}"
+    network = "${var.network_name}"
     # for temporal public ip keeps access_config empty
     access_config { 
       # for fixed public ip address uncomment this
@@ -40,15 +40,15 @@ resource "google_compute_instance" "k3s_main" {
   }
 
   metadata = {
-    project = "${var.project}"
+    project = "${var.project_id}"
     clustername = "${var.cluster_name}"
     version = "${var.k3s_version}"
-    csidisk = "${var.k3s_csidisk}"
-    location = "${var.k3s_location}"
-    dnsname = "${var.server_name}.${var.dns_name}"
+    csidisk = "${var.k3s_csidisk_version}"
+    bucket = "${var.bucket}"
+    dnsname = "${var.server_name}.c.${var.project_id}.internal"
   }
 
-  metadata_startup_script =  "${file("${var.script_install}")}"
+  metadata_startup_script =  "${file("${path.module}/${var.script_install}")}"
 
 
   service_account {
