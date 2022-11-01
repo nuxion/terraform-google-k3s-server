@@ -58,6 +58,8 @@ resource "google_compute_instance" "k3s_main" {
   }
 }
 
+
+
 # resource "google_dns_record_set" "kube_api" {
 #   name = "${var.server_name}.${var.dns_name}"
 #   type = "A"

@@ -32,6 +32,40 @@ module "k3s" {
   server_name = "k3s-main"
   server_zone="${var.zone}"
   network_name="prod"
+  network_tags = ["prod"]
   project_id = "${var.project_id}"
   bucket="${var.bucket}"
+}
+
+module "k3s_tpl" {
+  source = "../modules/node-template"
+  tpl_name= "k3s-tpl"
+  network_name="prod"
+  network_tags = ["prod"]
+  k3s_url = "${module.k3s.k3s_url}"
+  project_id = "${var.project_id}"
+  bucket="${var.bucket}"
+}
+
+resource "google_compute_instance_group_manager" "agent" {
+  name = "agent"
+
+  base_instance_name = "agt"
+  zone               = "${var.zone}"
+
+  version {
+    instance_template  = module.k3s_tpl.id
+  }
+
+  # all_instances_config {
+  #   metadata = {
+  #     pool = "general"
+  #   }
+  #   labels = {
+  #     env = "prod"
+  #     pool = "general"
+  #   }
+  # }
+  target_size  = 1
+
 }

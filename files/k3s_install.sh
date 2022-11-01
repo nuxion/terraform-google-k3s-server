@@ -41,6 +41,12 @@ then
     apt-get install -y git
 fi
 
+if ! command_exists "sqlite3" &> /dev/null
+then
+    apt-get install -y sqlite3
+fi
+
+
 META=`curl -s "http://metadata.google.internal/computeMetadata/v1/instance/?recursive=true" -H "Metadata-Flavor: Google"`
 PROJECT=`echo $META | jq .attributes.project | tr -d '"'`
 K3S_VERSION=`echo $META | jq .attributes.version | tr -d '"'`
@@ -74,7 +80,7 @@ then
 	    mkdir -p /etc/rancher/k3s 
     fi
     _log "Creating config file for k3s"
-    cat <<EOT > /etc/rancher/k3s/k3s.yaml
+    cat <<EOT > /etc/rancher/k3s/config.yaml
 write-kubeconfig-mode: "0640"
 tls-san:
     - "${DNS_NAME}"
@@ -88,7 +94,7 @@ EOT
     curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=${K3S_VERSION} sh -
 
     _log "Putting node-token into ${BUCKET}/k3s/${K3S_NAME}"
-    gsutil cp /var/lib/rancher/k3s/server/node-token gs://${PROJECT}-infra/k3s/${LOCATION}/${K3S_NAME}/node-token | tee /dev/fd/3
+    gsutil cp /var/lib/rancher/k3s/server/node-token ${BUCKET}/k3s/${K3S_NAME}/node-token | tee /dev/fd/3
 
     cat /etc/rancher/k3s/k3s.yaml | sed "s/127.0.0.1/${DNS_NAME}/g" > /root/k3s.yaml
     gsutil cp /root/k3s.yaml ${BUCKET}/k3s/${K3S_NAME}/k3s.yaml | tee /dev/fd/3
