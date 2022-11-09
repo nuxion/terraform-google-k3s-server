@@ -74,20 +74,32 @@ wait_kube(){
     
 }
 
+git clone --depth 1 https://github.com/nuxion/terraform-google-k3s-server /opt/terraform-google-k3s-server
+
 if [ ! -z "$REGISTRY" ];
 then
-    registry_token=$(gcloud auth print-access-token)
+    # https://github.com/k3s-io/k3s/issues/2367
+    # https://github.com/k3s-io/k3s/issues/1610
+    export INSTALL_K3S_EXEC="
+    server \
+    --kubelet-arg feature-gates=KubeletCredentialProviders=true \
+    --kubelet-arg image-credential-provider-config=/etc/rancher/k3s/credential-provider-config.yaml \
+    --kubelet-arg image-credential-provider-bin-dir=/usr/local/bin/
+    "
+    # registry_token=$(gcloud auth print-access-token)
     mkdir -p /etc/rancher/k3s
-    cat <<EOT > /etc/rancher/k3s/registry.yaml
-mirrors:
-  docker.io:
-    endpoint:
-      - "${REGISTRY}"
-configs:
-  "${REGISTRY}":
-    auth:
-      auth: ${registry_token}
+    cat <<EOT > /etc/rancher/k3s/credential-provider-config.yaml
+kind: CredentialProviderConfig
+apiVersion: kubelet.config.k8s.io/v1alpha1
+providers:
+  - name: custom-credential-provider
+    matchImages:
+      - "*.pkg.dev"
+      - "pkg.dev"
+    defaultCacheDuration: "1m"
+    apiVersion: credentialprovider.kubelet.k8s.io/v1alpha1
 EOT
+    cp /opt/terraform-google-k3s-server/files/custom-credential-provider /usr/local/bin
 
 fi
 
@@ -139,8 +151,7 @@ EOT
     
     if [ ! -z "${BACKUP_BUCKET}" ];
     then
-        git clone --depth 1 https://github.com/nuxion/terraform-google-k3s-server /opt/terraform-google-k3s-server
-	chmod +x /opt/terraform-google-k3s-server/files/backup.sh 
+	    chmod +x /opt/terraform-google-k3s-server/files/backup.sh 
         (crontab -l ; echo "00 09 * * 1-5 /opt/terraform-google-k3s-server/files/backup.sh ${BACKUP_BUCKET}") | crontab -
     fi
     
