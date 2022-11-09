@@ -46,6 +46,10 @@ resource "google_compute_instance" "k3s_main" {
     csidisk = "${var.k3s_csidisk_version}"
     bucket = "${var.bucket}"
     dnsname = "${var.server_name}.c.${var.project_id}.internal"
+    backup_bucket = "${var.backup_bucket}"
+    restore_bucket = "${var.restore_bucket}"
+    restore_file = "${var.restore_file}"
+    registry = "${var.registry}"
   }
 
   metadata_startup_script =  "${file("${path.module}/${var.script_install}")}"

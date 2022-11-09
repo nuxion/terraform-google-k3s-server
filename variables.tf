@@ -8,6 +8,30 @@ variable "bucket" {
   type = string
 }
 
+variable "backup_bucket" {
+  description= "backup bucket"
+  type= string
+  default = ""
+}
+
+variable "restore_bucket" {
+  description= "restore backup bucket"
+  type= string
+  default = ""
+}
+
+variable "restore_file" {
+  description= "restore file name of backup"
+  type= string
+  default = ""
+}
+
+variable "registry" {
+  description= "google registry"
+  type= string
+  default = ""
+}
+
 variable "script_install" {
   description = "startup script for k3s installation"
   type = string

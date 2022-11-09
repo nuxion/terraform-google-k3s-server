@@ -29,3 +29,11 @@ destroy:
 .PHONY: force-unlock
 force-unlock:
 	terraform force-unlock ${LOCK}
+
+.PHONY: registry
+registry:
+	gcloud artifacts repositories create docker-repo --repository-format=docker \
+          --location=$REGION --description="Docker repository"
+
+registry-list:
+	gcloud artifacts repositories list
