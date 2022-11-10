@@ -35,6 +35,7 @@ module "k3s" {
   network_tags = ["prod"]
   project_id = "${var.project_id}"
   bucket="${var.bucket}"
+  registry="${var.region}-docker.pkg.dev"
 }
 
 module "k3s_tpl" {
@@ -45,6 +46,7 @@ module "k3s_tpl" {
   k3s_url = "${module.k3s.k3s_url}"
   project_id = "${var.project_id}"
   bucket="${var.bucket}"
+  spot_instance=true
 }
 
 resource "google_compute_instance_group_manager" "agent" {
