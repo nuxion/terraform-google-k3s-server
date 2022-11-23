@@ -76,12 +76,14 @@ wait_kube(){
 
 git clone --depth 1 https://github.com/nuxion/terraform-google-k3s-server /opt/terraform-google-k3s-server
 
+INSTALL_K3S_EXEC="server --secrets-encryption"
+
 if [ ! -z "$REGISTRY" ];
 then
     # https://github.com/k3s-io/k3s/issues/2367
     # https://github.com/k3s-io/k3s/issues/1610
     export INSTALL_K3S_EXEC="
-    server \
+    ${INSTALL_K3S_EXEC} \
     --kubelet-arg feature-gates=KubeletCredentialProviders=true \
     --kubelet-arg image-credential-provider-config=/etc/rancher/k3s/credential-provider-config.yaml \
     --kubelet-arg image-credential-provider-bin-dir=/usr/local/bin/
@@ -145,7 +147,7 @@ EOT
         echo "Restoring ${RESTORE_TARGZ}"
         git clone --depth 1 https://github.com/nuxion/terraform-google-k3s-server /opt/terraform-google-k3s-server
 	chmod +x /opt/terraform-google-k3s-server/files/restore.sh
-        curl -sfL https://get.k3s.io |  INSTALL_K3S_SKIP_START=true INSTALL_K3S_VERSION=${K3S_VERSION} INSTALL_K3S_EXEC="server --secrets-encryption" sh -
+        curl -sfL https://get.k3s.io |  INSTALL_K3S_SKIP_START=true INSTALL_K3S_VERSION=${K3S_VERSION}  sh -
 	/opt/terraform-google-k3s-server/files/restore.sh ${RESTORE_BUCKET} ${RESTORE_TARGZ}
     fi
     

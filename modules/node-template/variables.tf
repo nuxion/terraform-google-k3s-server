@@ -13,6 +13,12 @@ variable "k3s_url" {
   type = string
 }
 
+variable "registry" {
+  description= "google registry"
+  type= string
+  default = ""
+}
+
 variable "script_install" {
   description = "startup script for k3s installation"
   type = string

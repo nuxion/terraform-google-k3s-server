@@ -47,6 +47,7 @@ module "k3s_tpl" {
   project_id = "${var.project_id}"
   bucket="${var.bucket}"
   spot_instance=true
+  registry="${var.region}-docker.pkg.dev"
 }
 
 resource "google_compute_instance_group_manager" "agent" {

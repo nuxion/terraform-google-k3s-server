@@ -16,8 +16,8 @@ resource "google_compute_instance_template" "agent_cpu_tpl" {
 
   scheduling {
     preemptible = var.spot_instance
-    automatic_restart   = var.automatic_restart
-    on_host_maintenance = "MIGRATE"
+    automatic_restart   = var.spot_instance ? false : true
+    on_host_maintenance = var.spot_instance ? "TERMINATE" : "MIGRATE"
   }
 
   // Create a new boot disk from an image
@@ -46,6 +46,7 @@ resource "google_compute_instance_template" "agent_cpu_tpl" {
     version = "${var.k3s_version}"
     server = "${var.k3s_url}"
     bucket = "${var.bucket}"
+    registry = "${var.registry}"
     # ssh-keys = "${var.operator_user}:${file(var.public_key_path)}"
   }
 
