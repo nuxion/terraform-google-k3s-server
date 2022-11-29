@@ -1,6 +1,6 @@
 resource "google_compute_instance" "k3s_main" {
   name        = "${var.server_name}"
-  description = "K3s main node provisioning"
+  description = "K3s control plane"
 
   tags = var.network_tags
 
@@ -45,7 +45,7 @@ resource "google_compute_instance" "k3s_main" {
     version = "${var.k3s_version}"
     csidisk = "${var.k3s_csidisk_version}"
     bucket = "${var.bucket}"
-    dnsname = "${var.server_name}.c.${var.project_id}.internal"
+    dnsname = "${var.server_name}.${var.server_zone}.c.${var.project_id}.internal"
     backup_bucket = "${var.backup_bucket}"
     restore_bucket = "${var.restore_bucket}"
     restore_file = "${var.restore_file}"

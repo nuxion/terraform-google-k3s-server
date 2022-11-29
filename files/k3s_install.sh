@@ -120,7 +120,7 @@ write-kubeconfig-mode: "0640"
 tls-san:
     - "${DNS_NAME}"
 node-label:
-    - "pool=no"
+    - "pool=control-plane"
 EOT
 
     if [ -z "${RESTORE_TARGZ}" ];
