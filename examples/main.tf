@@ -15,6 +15,12 @@ variable "zone" {
   default = "us-central1-a"
 }
 
+variable "agt_zone" {
+  description = "Zone for the agent"
+  type = string
+  default = "us-central1-a"
+}
+
 
 variable "region" {
   type = string
@@ -54,7 +60,7 @@ resource "google_compute_instance_group_manager" "agent" {
   name = "agent"
 
   base_instance_name = "agt"
-  zone               = "${var.zone}"
+  zone               = "${var.agt_zone}"
 
   version {
     instance_template  = module.k3s_tpl.id
