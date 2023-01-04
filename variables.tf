@@ -112,9 +112,10 @@ variable "network_name" {
 }
 
 variable "k3s_version" {
-  description = "K3s version to install"
+  description = "K3s version to install, see https://github.com/k3s-io/k3s/releases"
   type = string
-  default = "v1.24.4+k3s1"
+  # default = "v1.24.4+k3s1"
+  default = "v1.26.0+k3s1"
 }
 
 variable "k3s_csidisk_version" {

@@ -35,7 +35,7 @@ variable "bucket" {
 
 module "k3s" {
   source = "../"
-  server_name = "k3s-main"
+  server_name = "k3s-test"
   server_zone="${var.zone}"
   network_name="prod"
   network_tags = ["prod"]
@@ -46,7 +46,7 @@ module "k3s" {
 
 module "k3s_tpl" {
   source = "../modules/node-template"
-  tpl_name= "k3s-tpl"
+  tpl_name= "k3s-tpl-test"
   network_name="prod"
   network_tags = ["prod"]
   k3s_url = "${module.k3s.k3s_url}"
@@ -57,9 +57,9 @@ module "k3s_tpl" {
 }
 
 resource "google_compute_instance_group_manager" "agent" {
-  name = "agent"
+  name = "agent-test"
 
-  base_instance_name = "agt"
+  base_instance_name = "agt-test"
   zone               = "${var.agt_zone}"
 
   version {
@@ -75,6 +75,6 @@ resource "google_compute_instance_group_manager" "agent" {
   #     pool = "general"
   #   }
   # }
-  target_size  = 1
+  target_size  = 0
 
 }

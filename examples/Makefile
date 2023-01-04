@@ -26,7 +26,7 @@ refresh:
 .PHONY: apply
 destroy:
 	# terraform destroy -var 'region=${REGION}' -var 'zone=${ZONE}' -var 'project_id=${PROJECT}'  -var 'bucket=${BUCKET}'
-	terraform destroy
+	terraform destroy -var 'region=${REGION}' -var 'zone=${ZONE}' -var 'agt_zone=${AGT_ZONE}' -var 'bucket=${BUCKET}' -var 'project_id=${PROJECT}'
 
 .PHONY: force-unlock
 force-unlock:
