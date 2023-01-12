@@ -1,9 +1,6 @@
 # k3s main server module for google provider
 
-A module and 
 This repo contains modules for running a k3s cluster on [Google Cloud Platform](https://cloud.google.com/)
-
-It has two modules. The main one is for the k3s server. The server is installed in standalone mode using SQLite instead of etcd. 
 
 The other module could be used as a node template for the agents. In this way, and because nodes usually will be used in pools, it's possible to combine different templates with the [instance group manager option](https://cloud.google.com/compute/docs/instance-groups) of GCP. Check [examples/](examples/).
 
