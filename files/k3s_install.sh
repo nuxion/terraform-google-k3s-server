@@ -3,7 +3,7 @@ set -o nounset
 set -o errexit
 export DEBIAN_FRONTEND=noninteractive
 CHECK_EVERY=8
-CS_VERSION=0.6.0
+CS_VERSION=0.7.0
 LOG_FILE=/var/log/startup.log
 
 exec 3>&1 1>>${LOG_FILE} 2>&1
@@ -46,6 +46,10 @@ then
     apt-get install -y sqlite3
 fi
 
+if ! command_exists "helm" &> /dev/null
+then
+    cscli -i helm
+fi
 
 META=`curl -s "http://metadata.google.internal/computeMetadata/v1/instance/?recursive=true" -H "Metadata-Flavor: Google"`
 PROJECT=`echo $META | jq .attributes.project | tr -d '"'`
@@ -59,6 +63,7 @@ RESTORE_BUCKET=`echo $META | jq .attributes.restore_bucket | tr -d '"'`
 RESTORE_TARGZ=`echo $META | jq .attributes.restore_file | tr -d '"'`
 BACKUP_BUCKET=`echo $META | jq .attributes.backup_bucket | tr -d '"'`
 BUCKET=`echo $META | jq .attributes.bucket | tr -d '"'`
+INGRESS=`echo $META | jq .attributes.ingress | tr -d '"'`
 IPV4=`echo ${META} | jq ".networkInterfaces[0].ip" | tr -d '"'`
 # Ex: stable-1-24
 CSI_DISK=`echo $META | jq attributes.csidisk | tr -d '"'`
@@ -76,7 +81,12 @@ wait_kube(){
 
 git clone --depth 1 https://github.com/nuxion/terraform-google-k3s-server /opt/terraform-google-k3s-server
 
-INSTALL_K3S_EXEC="server --secrets-encryption"
+if [ "$INGRESS" == "nginx" ];
+then
+    INSTALL_K3S_EXEC="server --secrets-encryption --disable traefik"
+else
+    INSTALL_K3S_EXEC="server --secrets-encryption"
+fi
 
 if [ ! -z "$REGISTRY" ];
 then
@@ -157,6 +167,13 @@ EOT
         (crontab -l ; echo "00 09 * * 1-5 /opt/terraform-google-k3s-server/files/backup.sh ${BACKUP_BUCKET}") | crontab -
     fi
     
+fi
+if [ "$INGRESS" == "nginx" ];
+then
+    export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+    helm upgrade --install ingress-nginx ingress-nginx \
+         --repo https://kubernetes.github.io/ingress-nginx \
+         --namespace ingress-nginx --create-namespace
 fi
 _log "Showing final state of kubernetes"
 kubectl get pods -A -o wide | tee /dev/fd/3

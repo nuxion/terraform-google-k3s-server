@@ -50,6 +50,7 @@ resource "google_compute_instance" "k3s_main" {
     restore_bucket = "${var.restore_bucket}"
     restore_file = "${var.restore_file}"
     registry = "${var.registry}"
+    ingress = "${var.ingress_controller}"
   }
 
   metadata_startup_script =  "${file("${path.module}/${var.script_install}")}"

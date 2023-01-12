@@ -1,20 +1,39 @@
 # k3s main server module for google provider
 
-It has two modules. One for the k3s server and other as a node template. 
+A module and 
+This repo contains modules for running a k3s cluster on [Google Cloud Platform](https://cloud.google.com/)
 
-Usually nodes will be used in pools, meanwhile the server in this setup is in standalone mode. 
+It has two modules. The main one is for the k3s server. The server is installed in standalone mode using SQLite instead of etcd. 
+
+The other module could be used as a node template for the agents. In this way, and because nodes usually will be used in pools, it's possible to combine different templates with the [instance group manager option](https://cloud.google.com/compute/docs/instance-groups) of GCP. Check [examples/](examples/).
 
 Features:
 
 - Registry configuration for Google Artifacts
 - Nodes join automatically to the cluster
-- Backup of the server
+- Backup of configuration files to the google object storage
 - Disk CSI Driver to integrate with google
 - Configurable node labeling when setting up
-
+- Ingress controller selection between `nginx` and `traefik`
 
 For google csi driver usage checks: 
 https://github.com/nuxion/gcp-compute-persistent-disk-csi-driver
+
+For my use case one main server is ok. In addition the server is capable to run workloads. If you are interest in a HA version of the module, let me know and we can work together. You can send me an email or open a issue in the github repo. 
+
+The same, if you are interest in another cloud provider. 
+
+## Pendings
+
+- [ ] Restore configuration
+- [ ] Backup at disk level 
+- [ ] Evaluate backup using SQLiteStream from Fly.to. 
+
+## Example use case
+
+This module is being used in production as crawling platform for [algorinfo](https://algorinfo.com), where different pools are created by zones:
+
+![k3s diagram](/docs/crawling.jpg)
 
 ## References
 - [Terraform module creation](https://www.terraform.io/language/modules/develop/structure)

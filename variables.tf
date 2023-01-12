@@ -123,3 +123,11 @@ variable "k3s_csidisk_version" {
   type = string
   default = "stable-1-24"
 }
+
+variable "ingress_controller" {
+  type = string
+  description = "Choose which controller install. Options: 'traefik', 'nginx'"
+  default = "nginx"
+
+}
+
