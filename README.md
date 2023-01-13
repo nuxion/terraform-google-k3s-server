@@ -34,7 +34,7 @@ For native google cloud disk storage support you should add service account for 
 - [ ] Backup at disk level 
 - [ ] Evaluate backup using SQLiteStream from Fly.to. 
 - [ ] Better documentation for CSI Google driver
-- [ ] Check variable documentation of `bucket` param. gs:// prefix is a MUST
+- [x] Check variable documentation of `bucket` param. gs:// prefix is a MUST
 
 ## Example use case
 

@@ -4,7 +4,7 @@ variable "project_id" {
 }
 
 variable "bucket" {
-  description = "Bucket used to store k3s status data"
+  description = "Bucket used to store k3s status data, for instance: 'gs://<project-id>-kubernetes'. You MUST include 'gs://' prefix."
   type = string
 }
 
