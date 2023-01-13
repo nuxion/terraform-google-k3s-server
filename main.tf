@@ -42,7 +42,7 @@ resource "google_compute_instance" "k3s_main" {
   # This prevent disk attachment loop when disk are provisioned using the CSI driver
   # https://github.com/hashicorp/terraform-provider-google/issues/2098
   lifecycle {
-  	 ignore_changes = ["attached_disk"]
+  	 ignore_changes = [attached_disk]
   }
 
   metadata = {
