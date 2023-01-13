@@ -33,6 +33,11 @@ resource "google_compute_instance_template" "agent_cpu_tpl" {
   }
 
 
+  # This prevent disk attachment loop when disk are provisioned using the CSI driver
+  # https://github.com/hashicorp/terraform-provider-google/issues/2098
+  lifecycle {
+  	 ignore_changes = ["attached_disk"]
+  }
   network_interface {
     network = "${var.network_name}"
     access_config {
