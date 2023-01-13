@@ -37,6 +37,7 @@ module "k3s" {
   source = "../"
   server_name = "k3s-test"
   server_zone="${var.zone}"
+  cluster_name = "test"
   network_name="prod"
   network_tags = ["prod"]
   project_id = "${var.project_id}"

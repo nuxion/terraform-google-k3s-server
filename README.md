@@ -20,11 +20,21 @@ For my use case one main server is ok. In addition the server is capable to run 
 
 The same, if you are interest in another cloud provider. 
 
+## Quickstart
+
+For a quick start you can go to [examples/](examples/). 
+
+For native google cloud disk storage support you should add service account for disk managment as:
+
+`$BUCKET/k3s/cloud-sa.json`
+
 ## Pendings
 
 - [ ] Restore configuration
 - [ ] Backup at disk level 
 - [ ] Evaluate backup using SQLiteStream from Fly.to. 
+- [ ] Better documentation for CSI Google driver
+- [ ] Check variable documentation of `bucket` param. gs:// prefix is a MUST
 
 ## Example use case
 
