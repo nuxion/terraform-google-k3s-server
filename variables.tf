@@ -131,3 +131,21 @@ variable "ingress_controller" {
 
 }
 
+variable "server_disk_type" {
+  type = string
+  description = "Disk type of the main disk used for k3s data"
+  default = "pd-standard"
+
+}
+
+variable "server_disk_size" {
+  description = "Main k3s disk Size"
+  type = string
+  default = "10"
+}
+
+variable "server_disk_block_size" {
+  description = "Main k3s disk block size in bytes"
+  type = number
+  default = 4096
+}

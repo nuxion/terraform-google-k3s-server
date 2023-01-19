@@ -1,3 +1,17 @@
+resource "google_compute_disk" "k3s_main_disk" {
+  name  = "disk-${var.server_name}"
+  type  = "${var.server_disk_type}"
+  zone  = var.server_zone
+  # image = "debian-9-stretch-v20200805"
+  labels = {
+    service = "k3s"
+    cluster = "${var.cluster_name}"
+    pool = "control-plane"
+  }
+  size = "${var.server_disk_size}"
+  physical_block_size_bytes = var.server_disk_block_size
+}
+
 resource "google_compute_instance" "k3s_main" {
   name        = "${var.server_name}"
   description = "K3s control plane"
@@ -7,6 +21,7 @@ resource "google_compute_instance" "k3s_main" {
   labels = {
     env = "${var.label_env}"
     cluster = "${var.cluster_name}"
+    pool = "control-plane"
   }
 
   machine_type         = "${var.server_machine_type}"
@@ -14,6 +29,7 @@ resource "google_compute_instance" "k3s_main" {
   can_ip_forward       = true 
 
   scheduling {
+    # TODO Review this
     automatic_restart   = true
     on_host_maintenance = "MIGRATE"
   }
@@ -69,7 +85,12 @@ resource "google_compute_instance" "k3s_main" {
   }
 }
 
-
+resource "google_compute_attached_disk" "k3s_main_attached_disk" {
+  disk     = google_compute_disk.k3s_main_disk.id
+  instance = google_compute_instance.k3s_main.name
+  zone  = var.server_zone
+  device_name = "pv-${var.server_name}"
+}
 
 # resource "google_dns_record_set" "kube_api" {
 #   name = "${var.server_name}.${var.dns_name}"

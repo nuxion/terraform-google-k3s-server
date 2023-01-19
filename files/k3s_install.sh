@@ -1,6 +1,6 @@
 #!/bin/bash
 set -o nounset
-set -o errexit
+# set -o errexit
 export DEBIAN_FRONTEND=noninteractive
 CHECK_EVERY=8
 CS_VERSION=0.7.0
@@ -14,6 +14,15 @@ _log() {
 
 command_exists() {
 	command -v "$@" > /dev/null 2>&1
+}
+
+
+check_disk_formated() {
+    lsblk -f ${1} | grep ext4
+}
+
+format_disk() {
+    mkfs.ext4 ${1}
 }
 
 # https://bugs.launchpad.net/ubuntu/+source/man-db/+bug/1858777
@@ -66,7 +75,7 @@ BUCKET=`echo $META | jq .attributes.bucket | tr -d '"'`
 INGRESS=`echo $META | jq .attributes.ingress | tr -d '"'`
 IPV4=`echo ${META} | jq ".networkInterfaces[0].ip" | tr -d '"'`
 # Ex: stable-1-24
-CSI_DISK=`echo $META | jq attributes.csidisk | tr -d '"'`
+CSI_DISK=`echo $META | jq .attributes.csidisk | tr -d '"'`
 
 wait_kube(){
     running=`kubectl get pods -n kube-system | grep Running | wc -l`
@@ -115,7 +124,18 @@ EOT
 
 fi
 
-
+DEVICE=/dev/disk/by-id/google
+K3S_VOL="${DEVICE}-pv-${HOSTNAME}"
+_log "Configuring disk ${K3S_VOL}"
+mkdir -p /var/lib/rancher/k3s
+check_disk_formated ${K3S_VOL}
+status=$?
+if [ "${status}" -ne 0 ];
+then
+    format_disk ${K3S_VOL}
+fi
+resize2fs  ${K3S_VOL} | tee /dev/fd/3
+mount ${K3S_VOL} /var/lib/rancher/k3s | tee /dev/fd/3
 
 # gsutil cp gs://infra/${K3S_NAME}/config.yaml /etc/rancher/
 if ! command_exists "kubectl" &> /dev/null
