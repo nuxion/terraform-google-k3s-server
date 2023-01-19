@@ -8,6 +8,7 @@ resource "google_compute_instance_template" "agent_cpu_tpl" {
     env = "${var.label_env}"
     cluster = "${var.cluster_name}"
     spot = "${var.spot_instance}"
+    pool = "${var.label_pool_name}"
   }
 
   instance_description = "k3s cpu agent"
