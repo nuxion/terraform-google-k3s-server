@@ -38,8 +38,8 @@ module "k3s" {
   server_name = "k3s-test"
   server_zone="${var.zone}"
   cluster_name = "test"
-  network_name="prod"
-  network_tags = ["prod"]
+  network_name="prod-2"
+  network_tags = ["prod-2"]
   project_id = "${var.project_id}"
   bucket="${var.bucket}"
   registry="${var.region}-docker.pkg.dev"
@@ -48,8 +48,8 @@ module "k3s" {
 module "k3s_tpl" {
   source = "../modules/node-template"
   tpl_name= "k3s-tpl-test"
-  network_name="prod"
-  network_tags = ["prod"]
+  network_name="prod-2"
+  network_tags = ["prod-2"]
   k3s_url = "${module.k3s.k3s_url}"
   project_id = "${var.project_id}"
   bucket="${var.bucket}"
