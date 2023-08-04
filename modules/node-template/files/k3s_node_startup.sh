@@ -49,6 +49,9 @@ K3S_NAME=`echo $META | jq .attributes.clustername | tr -d '"'`
 POOL=`echo $META | jq .attributes.pool | tr -d '"'`
 BUCKET=`echo $META | jq .attributes.bucket | tr -d '"'`
 REGISTRY=`echo $META | jq .attributes.registry | tr -d '"'`
+PACKAGES=`echo $META | jq .attributes.packages | tr -d '"'`
+
+# IFS=',' read -ra PACKAGES <<< "$_PKGS"
 # MZONE=`curl -s "http://metadata.google.internal/computeMetadata/v1/instance/zone" -H "Metadata-Flavor: Google"`
 # ZONE=`echo ${META} | jq ".zone" | tr "/" "\n" | tail -n 1`
 # IPV4=`echo ${META} | jq ".networkInterfaces[0].ip" | tr -d '"'`
@@ -64,6 +67,13 @@ wait_kube(){
     done
     
 }
+if [ ! -z "$PACKAGES" ];
+then
+        _log "Installing packages ${PACKAGES}"
+	apt-get update
+	apt-get install -y --no-install-recommends $PACKAGES
+	apt-get clean
+fi
 
 
 git clone --depth 1 https://github.com/nuxion/terraform-google-k3s-server /opt/terraform-google-k3s-server

@@ -19,6 +19,12 @@ variable "registry" {
   default = ""
 }
 
+variable "packages" {
+  description= "Packages to be installed in O.S. like nfs-common"
+  type= string
+  default = ""
+}
+
 variable "script_install" {
   description = "startup script for k3s installation"
   type = string

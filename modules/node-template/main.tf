@@ -48,6 +48,7 @@ resource "google_compute_instance_template" "agent_cpu_tpl" {
     server = "${var.k3s_url}"
     bucket = "${var.bucket}"
     registry = "${var.registry}"
+    packages = "${var.packages}"
     # ssh-keys = "${var.operator_user}:${file(var.public_key_path)}"
   }
 

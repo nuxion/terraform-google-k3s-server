@@ -76,6 +76,7 @@ INGRESS=`echo $META | jq .attributes.ingress | tr -d '"'`
 IPV4=`echo ${META} | jq ".networkInterfaces[0].ip" | tr -d '"'`
 # Ex: stable-1-24
 CSI_DISK=`echo $META | jq .attributes.csidisk | tr -d '"'`
+PACKAGES=`echo $META | jq .attributes.packages | tr -d '"'`
 
 wait_kube(){
     running=`kubectl get pods -n kube-system | grep Running | wc -l`
@@ -87,6 +88,13 @@ wait_kube(){
     done
     
 }
+
+if [ ! -z "$PACKAGES" ];
+then
+    _log "Installing packages ${PACKAGES}"
+	apt-get install -y --no-install-recommends $PACKAGES
+	apt-get clean
+fi
 
 git clone --depth 1 https://github.com/nuxion/terraform-google-k3s-server /opt/terraform-google-k3s-server
 
